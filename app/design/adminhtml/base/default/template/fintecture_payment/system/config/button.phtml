@@ -1,0 +1,63 @@
+<script type="text/javascript">
+    //<![CDATA[
+    function makeRequest(environment, app_id, app_secret, private_key) {
+        let formData = new FormData();
+        formData.append('environment', environment);
+        formData.append('app_id', app_id);
+        formData.append('app_secret', app_secret);
+        formData.append('private_key', private_key);
+
+        let xhttp = new XMLHttpRequest();
+        xhttp.open('POST', '<?php echo $this->getAjaxCheckUrl(); ?>', true);
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4) {
+                let button = document.getElementById('fintecture_button');
+
+                if (document.contains(document.getElementById('fintecture-test-result'))) {
+                    document.getElementById('fintecture-test-result').remove();
+                }
+
+                let messageDiv = document.createElement('div');
+                messageDiv.id = 'fintecture-test-result';
+                messageDiv.style.marginTop = '10px';
+
+                if (this.status == 200) {
+                    messageDiv.innerText = 'Connection succeeded';
+                    messageDiv.style.color = '#2ecc71';
+                } else {
+                    messageDiv.innerText = 'Connection failed';
+                    messageDiv.style.color = '#e74c3c';
+                }
+                button.after(messageDiv);
+            }
+        };
+        xhttp.send(formData);
+    }
+
+    // Function to read content of a file
+    function readFile(file, onLoadCallback) {
+        var reader = new FileReader();
+        reader.onload = onLoadCallback;
+        reader.readAsText(file);
+    }
+
+    function check() {
+        let environment = document.getElementById('payment_fintecture_environment').value;
+        let app_id = document.getElementById('payment_fintecture_'+environment+'_app_id').value;
+        let app_secret = document.getElementById('payment_fintecture_'+environment+'_app_secret').value;
+        let private_key_field = document.getElementById('payment_fintecture_'+environment+'_private_key');
+        let private_key = '';
+
+        // Read uploaded file if defined
+        if (private_key_field.files.length > 0) { // check if index exists
+            readFile(private_key_field.files[0], function(e) {
+                private_key = e.target.result;
+                makeRequest(environment, app_id, app_secret, private_key);
+            });
+        } else {
+            makeRequest(environment, app_id, app_secret, private_key);
+        }
+    }
+    //]]>
+</script>
+<?php echo $this->getButtonHtml() ?>
