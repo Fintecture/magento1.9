@@ -1,0 +1,124 @@
+<?xml version="1.0"?>
+<config>
+    <sections>
+        <payment>
+            <groups>
+                <fintecture translate="label" module="fintecture_payment">
+                    <label>Fintecture Payment</label>
+                    <sort_order>10</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <active translate="label">
+                            <label>Enabled</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </active>
+                        <bank_type translate="label">
+                            <label>Bank Type</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>fintecture_payment/BankType</source_model>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </bank_type>
+                        <show_logo translate="label comment">
+                            <label>Show Logo</label>
+                            <comment>Show logo at checkout</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </show_logo>
+                        <environment translate="label">
+                            <label>Environment</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>fintecture_payment/Environment</source_model>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </environment>
+                        <production_app_id translate="label">
+                            <label>App ID</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>6</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends><environment>production</environment></depends>
+                        </production_app_id>
+                        <production_app_secret translate="label">
+                            <label>App Secret</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>7</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends><environment>production</environment></depends>
+                        </production_app_secret>
+                        <production_private_key translate="label">
+                            <label>Private Key</label>
+                            <frontend_type>file</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_file</backend_model>
+                            <upload_dir config="system/filesystem/media" scope_info="1">fintecture-uploads</upload_dir>
+                            <base_url type="media" scope_info="1">fintecture-uploads</base_url>
+                            <sort_order>8</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends><environment>production</environment></depends>
+                        </production_private_key>
+                        <sandbox_app_id translate="label">
+                            <label>Test App ID</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>9</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends><environment>sandbox</environment></depends>
+                        </sandbox_app_id>
+                        <sandbox_app_secret translate="label">
+                            <label>Test App Secret</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends><environment>sandbox</environment></depends>
+                        </sandbox_app_secret>
+                        <sandbox_private_key translate="label">
+                            <label>Test Private Key</label>
+                            <frontend_type>file</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_file</backend_model>
+                            <upload_dir config="system/filesystem/media" scope_info="1">fintecture-uploads</upload_dir>
+                            <base_url type="media" scope_info="1">fintecture-uploads</base_url>
+                            <sort_order>11</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends><environment>sandbox</environment></depends>
+                        </sandbox_private_key>
+                        <test_connection translate="label">
+                            <label>Test connection</label>
+                            <frontend_type>button</frontend_type>
+                            <frontend_model>fintecture_payment/adminhtml_system_config_form_button</frontend_model>
+                            <sort_order>12</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </test_connection>
+                    </fields>
+                </fintecture>
+            </groups>
+        </payment>
+    </sections>
+</config>

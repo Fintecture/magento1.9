@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Fintecture_Payment>
+            <version>1.0.0</version>
+        </Fintecture_Payment>
+    </modules>
+
+    <global>
+        <blocks>
+            <fintecture_payment>
+                <class>Fintecture_Payment_Block</class>
+            </fintecture_payment>
+        </blocks>
+        <models>
+            <fintecture_payment>
+                <class>Fintecture_Payment_Model</class>
+            </fintecture_payment>
+        </models>
+        <helpers>
+            <fintecture_payment>
+                <class>Fintecture_Payment_Helper</class>
+            </fintecture_payment>
+        </helpers>
+
+        <resources>
+            <payment_setup>
+                <setup>
+                    <module>Fintecture_Payment</module>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </payment_setup>
+            <payment_write>
+                <connection>
+                    <use>core_write</use>
+                </connection>
+            </payment_write>
+            <payment_read>
+                <connection>
+                    <use>core_read</use>
+                </connection>
+            </payment_read>
+        </resources>
+
+        <events>
+            <admin_system_config_changed_section_payment>
+                <observers>
+                    <Fintecture_Payment>
+                        <type>singleton</type>
+                        <class>fintecture_payment/observer</class>
+                        <method>adminSystemConfigChangedSectionPayment</method>
+                    </Fintecture_Payment>
+                </observers>
+            </admin_system_config_changed_section_payment>
+        </events>
+    </global>
+
+    <frontend>
+        <translate>
+            <modules>
+                <Fintecture_Payment>
+                    <files>
+                        <default>translate.csv</default>
+                    </files>
+                </Fintecture_Payment>
+            </modules>
+        </translate>
+
+        <routers>
+            <standard>
+                <use>standard</use>
+                <args>
+                    <module>Fintecture_Payment</module>
+                    <frontName>fintecture</frontName>
+                </args>
+            </standard>
+        </routers>
+    </frontend>
+
+    <adminhtml>
+        <translate>
+            <modules>
+                <Fintecture_Payment>
+                    <files>
+                        <default>fintecture_translate.csv</default>
+                    </files>
+                </Fintecture_Payment>
+            </modules>
+        </translate>
+    </adminhtml>
+
+    <default>
+        <payment>
+            <fintecture>
+                <active>1</active>
+                <model>fintecture_payment/payment</model>
+                <order_status>pending</order_status>
+                <payment_action>sale</payment_action>
+                <allowspecific>0</allowspecific>
+            </fintecture>
+        </payment>
+    </default>
+</config>
