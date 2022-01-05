@@ -24,6 +24,12 @@ class Fintecture_Payment_Model_Payment extends Mage_Payment_Model_Method_Abstrac
     // Use this to set whether the payment method should be available in only certain circumstances
     public function isAvailable($quote = null)
     {
+        // Check that Fintecture is enabled
+        if (!Mage::getStoreConfigFlag('payment/fintecture/active')) {
+            return false;
+        }
+
+        // Check that we have a quote
         if (!$quote) {
             return false;
         }
