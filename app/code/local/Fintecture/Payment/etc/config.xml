@@ -2,7 +2,7 @@
 <config>
     <modules>
         <Fintecture_Payment>
-            <version>1.0.1</version>
+            <version>1.0.2</version>
         </Fintecture_Payment>
     </modules>
 
@@ -62,7 +62,7 @@
             <modules>
                 <Fintecture_Payment>
                     <files>
-                        <default>translate.csv</default>
+                        <default>fintecture_translate.csv</default>
                     </files>
                 </Fintecture_Payment>
             </modules>
