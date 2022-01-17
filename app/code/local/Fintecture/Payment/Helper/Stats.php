@@ -2,7 +2,7 @@
 
 class Fintecture_Payment_Helper_Stats extends Mage_Payment_Helper_Data
 {
-    const FINTECTURE_PLUGIN_VERSION = '1.0.2';
+    const FINTECTURE_PLUGIN_VERSION = '1.0.3';
     const FINTECTURE_STATS_URL = 'https://api.fintecture.com/ext/v1/activity';
 
     public function logAction($action)

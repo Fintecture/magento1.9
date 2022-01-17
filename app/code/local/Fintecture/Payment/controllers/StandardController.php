@@ -55,18 +55,44 @@ class Fintecture_Payment_StandardController extends Mage_Core_Controller_Front_A
             $transaction_id = $util::FINTECTURE_PAYMENT_PREFIX . $order_id;
 
             $state = $util->getOrderState($payment_status, $params['status'], $transaction_id);
+
+            Mage::getSingleton('checkout/session')->setLastQuoteId($order->getQuoteId());
+            Mage::getSingleton('checkout/session')->setLastOrderId($order->getId())->setLastRealOrderId($order->getIncrementId());
+
             $order->setState($state, true);
 
             if ($state === Mage_Sales_Model_Order::STATE_PROCESSING) {
                 // Payment was successful, so update the order's state, send order email and move to the success page
+                $order->setTotalPaid($order->getGrandTotal());
                 $order->sendNewOrderEmail();
                 $order->setEmailSent(true);
                 $order->save();
-                Mage::getSingleton('checkout/session')->unsQuoteId();
+
+                if ($order->canInvoice()) {
+                    $invoice = Mage::getModel('sales/service_order', $order)->prepareInvoice();
+
+                    $invoice->setRequestedCaptureCase(Mage_Sales_Model_Order_Invoice::CAPTURE_OFFLINE);
+                    $invoice->register();
+
+                    $transactionSave = Mage::getModel('core/resource_transaction')
+                        ->addObject($invoice)
+                        ->addObject($invoice->getOrder());
+                    $transactionSave->save();
+
+                    $invoice->getOrder()->setIsInProcess(true);
+                    $order->addStatusHistoryComment(
+                        'Auto Invoice generated.',
+                        Mage_Sales_Model_Order::STATE_PROCESSING
+                    )->setIsCustomerNotified(true);
+                } else {
+                    $order->addStatusHistoryComment('Fintecture: Order cannot be invoiced.', false);
+                }
+                $order->save();
+
+                Mage::getSingleton('checkout/session')->setLastSuccessQuoteId($order->getQuoteId());
                 Mage_Core_Controller_Varien_Action::_redirect('checkout/onepage/success');
             } elseif ($state === Mage_Sales_Model_Order::STATE_PENDING_PAYMENT) {
                 $order->save();
-                Mage::getSingleton('checkout/session')->unsQuoteId();
                 Mage_Core_Controller_Varien_Action::_redirect('checkout/onepage/success');
                 Mage::getSingleton('core/session')->addNotice($this->__('Your payment is being validated by your bank.'));
             } else {
@@ -121,19 +147,40 @@ class Fintecture_Payment_StandardController extends Mage_Core_Controller_Front_A
 
         $newState = $util->mappedState($params['status']);
 
+        // Update the order's state with given status
+        $order->setState($newState, true);
+
         // Send mail from pending -> processing
         if ($order->getState() === Mage_Sales_Model_Order::STATE_PENDING_PAYMENT &&
             $newState === Mage_Sales_Model_Order::STATE_PROCESSING) {
             // Payment was successful, so update the order's state and send order email
+            $order->setTotalPaid($order->getGrandTotal());
             $order->sendNewOrderEmail();
             $order->setEmailSent(true);
+            $order->save();
+
+            if ($order->canInvoice()) {
+                $invoice = Mage::getModel('sales/service_order', $order)->prepareInvoice();
+
+                $invoice->setRequestedCaptureCase(Mage_Sales_Model_Order_Invoice::CAPTURE_OFFLINE);
+                $invoice->register();
+
+                $transactionSave = Mage::getModel('core/resource_transaction')
+                    ->addObject($invoice)
+                    ->addObject($invoice->getOrder());
+                $transactionSave->save();
+
+                $invoice->getOrder()->setIsInProcess(true);
+                $order->addStatusHistoryComment(
+                    'Auto Invoice generated.',
+                    Mage_Sales_Model_Order::STATE_PROCESSING
+                )->setIsCustomerNotified(true);
+            } else {
+                $order->addStatusHistoryComment('Fintecture: Order cannot be invoiced.', false);
+            }
         }
 
-        // Update the order's state with given status
-        $order->setState($newState, true);
         $order->save();
-
-        Mage::getSingleton('checkout/session')->unsQuoteId();
         exit;
     }
 

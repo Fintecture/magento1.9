@@ -5,6 +5,7 @@ class Fintecture_Payment_Model_Payment extends Mage_Payment_Model_Method_Abstrac
     protected $_code = 'fintecture';
 
     protected $_formBlockType = 'fintecture_payment/form_payment'; // This is the block that's displayed on the checkout
+    protected $_infoBlockType = 'fintecture_payment/payment_info'; // This is the block that's displayed on the checkout
 
     protected $_isInitializeNeeded = true;
 

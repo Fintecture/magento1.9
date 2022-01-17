@@ -86,7 +86,7 @@ class Fintecture_Payment_Helper_Util extends Mage_Payment_Helper_Data
                 'psu_address' => [
                     'street' => $address['street'],
                     'complement' => $address['street'],
-                    'zip' => (string) $address['postcode '],
+                    'zip' => (string) $address['postcode'],
                     'city' => $address['city'],
                     'country' => $address['country_id']
                 ]
