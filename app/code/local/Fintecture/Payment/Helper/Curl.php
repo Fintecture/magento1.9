@@ -62,7 +62,7 @@ class Fintecture_Payment_Helper_Curl extends Mage_Payment_Helper_Data
         $payload = 'grant_type=client_credentials&app_id=' . $app['app_id'] . '&scope=PIS';
 
         $token = $this->makeQuery('oauth/accesstoken', $payload, $headers);
-        if (!array_key_exists('access_token', $token)) {
+        if (is_array($token) && !array_key_exists('access_token', $token)) {
             return false;
         }
         return $token['access_token'];
@@ -111,7 +111,7 @@ class Fintecture_Payment_Helper_Curl extends Mage_Payment_Helper_Data
 
         $body = http_build_query($body, '', '&'); // string with body data separated by &
         $token = $this->makeQuery($url, $body, $headers, 'POST', $environment);
-        if (!array_key_exists('access_token', $token)) {
+        if (is_array($token) && !array_key_exists('access_token', $token)) {
             return false;
         }
         return true;
