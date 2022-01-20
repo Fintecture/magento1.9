@@ -2,7 +2,7 @@
 <config>
     <modules>
         <Fintecture_Payment>
-            <version>1.0.3</version>
+            <version>1.0.4</version>
         </Fintecture_Payment>
     </modules>
 
@@ -97,6 +97,7 @@
                 <active>1</active>
                 <model>fintecture_payment/payment</model>
                 <order_status>pending</order_status>
+                <title>Fintecture</title>
                 <payment_action>sale</payment_action>
                 <allowspecific>0</allowspecific>
             </fintecture>
