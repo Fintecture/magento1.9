@@ -65,7 +65,7 @@ class Fintecture_Payment_Helper_Util extends Mage_Payment_Helper_Data
         $data = $order->getData();
         $address = $order->getBillingAddress()->getData();
         $fullname = $data['customer_firstname'] . ' ' . $data['customer_lastname'];
-        $amount = (string) round($data['grand_total']); // keep only 2 decimals
+        $amount = (string) round($data['grand_total'], 2); // keep only 2 decimals
         $communication = self::FINTECTURE_PAYMENT_PREFIX . $data['increment_id'];
 
         return [
