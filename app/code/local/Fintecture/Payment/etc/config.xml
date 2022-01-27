@@ -94,6 +94,7 @@
     <default>
         <payment>
             <fintecture>
+                <title>Fintecture Payment</title>
                 <active>1</active>
                 <model>fintecture_payment/payment</model>
                 <order_status>pending</order_status>
