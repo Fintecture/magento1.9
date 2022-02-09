@@ -2,7 +2,7 @@
 <config>
     <modules>
         <Fintecture_Payment>
-            <version>1.0.4</version>
+            <version>1.0.5</version>
         </Fintecture_Payment>
     </modules>
 
@@ -12,11 +12,13 @@
                 <class>Fintecture_Payment_Block</class>
             </fintecture_payment>
         </blocks>
+
         <models>
             <fintecture_payment>
                 <class>Fintecture_Payment_Model</class>
             </fintecture_payment>
         </models>
+
         <helpers>
             <fintecture_payment>
                 <class>Fintecture_Payment_Helper</class>

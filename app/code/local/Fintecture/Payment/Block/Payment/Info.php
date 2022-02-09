@@ -2,8 +2,6 @@
 
 class Fintecture_Payment_Block_Payment_Info extends Mage_Payment_Block_Info
 {
-    const METHOD_TITLE = 'Fintecture';
-
     protected function _construct()
     {
         parent::_construct();
@@ -12,6 +10,15 @@ class Fintecture_Payment_Block_Payment_Info extends Mage_Payment_Block_Info
 
     public function getPaymentServiceTitle()
     {
-        return self::METHOD_TITLE;
+        return $this->getMethod()->getTitle();
+    }
+
+    public function getPaymentSessionId()
+    {
+        $order = $this->getInfo()->getOrder();
+        $payment = $order ? $order->getPayment() : null;
+        $sessionId = $payment ? $payment->getAdditionalInformation('fintecture_session_id') : null;
+
+        return $sessionId;
     }
 }

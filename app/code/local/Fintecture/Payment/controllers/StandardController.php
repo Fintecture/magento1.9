@@ -33,32 +33,40 @@ class Fintecture_Payment_StandardController extends Mage_Core_Controller_Front_A
     // The response action is triggered when your gateway sends back a response after processing the customer's payment
     public function responseAction()
     {
+        $request = $this->getRequest();
         $params = [
-            'state' => $this->getRequest()->getParam('state') ? $this->getRequest()->getParam('state') : '',
-            'status' => $this->getRequest()->getParam('status') ? $this->getRequest()->getParam('status') : '',
-            'session_id' => $this->getRequest()->getParam('session_id') ? $this->getRequest()->getParam('session_id') : '',
+            'state' => $request->getParam('state') ? $request->getParam('state') : '',
+            'status' => $request->getParam('status') ? $request->getParam('status') : '',
+            'session_id' => $request->getParam('session_id') ? $request->getParam('session_id') : ''
         ];
 
-        $validated = true;
-        if (empty($params['state']) || empty($params['status']) || empty($params['session_id'])) {
-            $validated = false;
-        } elseif (!in_array($params['status'], ['payment_created', 'payment_pending'])) {
-            $validated = false;
+        // Get order by state
+        $util = Mage::helper('fintecture_payment/util');
+        if (!empty($params['state'])) {
+            list($order, $order_id) = $util->getOrderByState($params['state']);
+
+            // Set Fintecture Session ID
+            if (!empty($params['session_id'])) {
+                $payment = $order->getPayment();
+                $payment->setAdditionalInformation('fintecture_session_id', $params['session_id']);
+                $payment->save();
+            }
         }
 
-        if ($validated) {
-            $util = Mage::helper('fintecture_payment/util');
+        $error = empty($params['state']) || empty($params['status']) || empty($params['session_id'] ||
+            !in_array($params['status'], ['payment_created', 'payment_pending']));
+
+        if (!$error) {
             $curl = Mage::helper('fintecture_payment/curl');
-
-            list($order, $order_id) = $util->getOrderByState($params['state']);
-            $payment_status = $curl->getPaymentStatus($params['session_id']);
-            $transaction_id = $util::FINTECTURE_PAYMENT_PREFIX . $order_id;
-
-            $state = $util->getOrderState($payment_status, $params['status'], $transaction_id);
 
             Mage::getSingleton('checkout/session')->setLastQuoteId($order->getQuoteId());
             Mage::getSingleton('checkout/session')->setLastOrderId($order->getId())->setLastRealOrderId($order->getIncrementId());
 
+            $payment_status = $curl->getPaymentStatus($params['session_id']);
+            $transaction_id = $util::FINTECTURE_PAYMENT_PREFIX . $order_id;
+
+            // Update the order's state with given status
+            $state = $util->getOrderState($payment_status, $params['status'], $transaction_id);
             $order->setState($state, true);
 
             if ($state === Mage_Sales_Model_Order::STATE_PROCESSING) {
@@ -67,6 +75,11 @@ class Fintecture_Payment_StandardController extends Mage_Core_Controller_Front_A
                 $order->sendNewOrderEmail();
                 $order->setEmailSent(true);
                 $order->save();
+
+                // Disable quote
+                $quoteId = $order->getQuoteId();
+                $quote = Mage::getModel('sales/quote')->load($quoteId);
+                $quote->setIsActive(0)->save();
 
                 if ($order->canInvoice()) {
                     $invoice = Mage::getModel('sales/service_order', $order)->prepareInvoice();
@@ -93,6 +106,12 @@ class Fintecture_Payment_StandardController extends Mage_Core_Controller_Front_A
                 Mage_Core_Controller_Varien_Action::_redirect('checkout/onepage/success');
             } elseif ($state === Mage_Sales_Model_Order::STATE_PENDING_PAYMENT) {
                 $order->save();
+
+                // Disable quote
+                $quoteId = $order->getQuoteId();
+                $quote = Mage::getModel('sales/quote')->load($quoteId);
+                $quote->setIsActive(0)->save();
+
                 Mage_Core_Controller_Varien_Action::_redirect('checkout/onepage/success');
                 Mage::getSingleton('core/session')->addNotice($this->__('Your payment is being validated by your bank.'));
             } else {
@@ -114,7 +133,7 @@ class Fintecture_Payment_StandardController extends Mage_Core_Controller_Front_A
             $order = Mage::getModel('sales/order')->loadByIncrementId(Mage::getSingleton('checkout/session')->getLastRealOrderId());
             if ($order->getId()) {
                 // Flag the order as 'holded' and save it
-                $order->cancel()->setState(Mage_Sales_Model_Order::STATE_HOLDED, true, 'Gateway has declined the payment.')->save();
+                $order->cancel()->setState(Mage_Sales_Model_Order::STATE_CANCELED, true, 'Gateway has declined the payment.')->save();
             }
 
             // Restore cart
@@ -136,7 +155,8 @@ class Fintecture_Payment_StandardController extends Mage_Core_Controller_Front_A
 
         $params = [
             'state' => $this->getRequest()->getParam('state') ? $this->getRequest()->getParam('state') : '',
-            'status' => $this->getRequest()->getParam('status') ? $this->getRequest()->getParam('status') : ''
+            'status' => $this->getRequest()->getParam('status') ? $this->getRequest()->getParam('status') : '',
+            'session_id' => $this->getRequest()->getParam('session_id') ? $this->getRequest()->getParam('session_id') : ''
         ];
 
         $order = $util->getOrderByState($params['state'])[0];
@@ -145,9 +165,13 @@ class Fintecture_Payment_StandardController extends Mage_Core_Controller_Front_A
             exit('invalid_cart');
         }
 
-        $newState = $util->mappedState($params['status']);
+        // Set Fintecture Session ID
+        $payment = $order->getPayment();
+        $payment->setAdditionalInformation('fintecture_session_id', $params['session_id']);
+        $payment->save();
 
         // Update the order's state with given status
+        $newState = $util->mappedState($params['status']);
         $order->setState($newState, true);
 
         // Send mail from pending -> processing
@@ -181,6 +205,7 @@ class Fintecture_Payment_StandardController extends Mage_Core_Controller_Front_A
         }
 
         $order->save();
+
         exit;
     }
 

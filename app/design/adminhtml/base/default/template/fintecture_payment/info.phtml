@@ -1,1 +1,8 @@
 <p><?php echo $this->getPaymentServiceTitle(); ?></p>
+<?php
+$sessionId = $this->getPaymentSessionId();
+if ($sessionId) {
+?>
+    <p>Fintecture Session ID: <?php echo $sessionId; ?></p>
+<?php
+}
