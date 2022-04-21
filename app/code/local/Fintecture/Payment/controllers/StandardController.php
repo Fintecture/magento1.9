@@ -71,7 +71,6 @@ class Fintecture_Payment_StandardController extends Mage_Core_Controller_Front_A
 
             if ($state === Mage_Sales_Model_Order::STATE_PROCESSING) {
                 // Payment was successful, so update the order's state, send order email and move to the success page
-                $order->setTotalPaid($order->getGrandTotal());
                 $order->sendNewOrderEmail();
                 $order->setEmailSent(true);
                 $order->save();
@@ -171,14 +170,18 @@ class Fintecture_Payment_StandardController extends Mage_Core_Controller_Front_A
         $payment->save();
 
         // Update the order's state with given status
+        $currentState = $order->getState();
         $newState = $util->mappedState($params['status']);
         $order->setState($newState, true);
 
         // Send mail from pending -> processing
-        if ($order->getState() === Mage_Sales_Model_Order::STATE_PENDING_PAYMENT &&
-            $newState === Mage_Sales_Model_Order::STATE_PROCESSING) {
+        $originStatus = [
+            Mage_Sales_Model_Order::STATE_NEW,
+            Mage_Sales_Model_Order::STATE_PENDING_PAYMENT
+        ];
+
+        if (in_array($currentState, $originStatus) && $newState === Mage_Sales_Model_Order::STATE_PROCESSING) {
             // Payment was successful, so update the order's state and send order email
-            $order->setTotalPaid($order->getGrandTotal());
             $order->sendNewOrderEmail();
             $order->setEmailSent(true);
             $order->save();
