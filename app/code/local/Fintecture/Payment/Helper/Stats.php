@@ -2,7 +2,7 @@
 
 class Fintecture_Payment_Helper_Stats extends Mage_Payment_Helper_Data
 {
-    const FINTECTURE_PLUGIN_VERSION = '1.0.7';
+    const FINTECTURE_PLUGIN_VERSION = '1.1.0';
     const FINTECTURE_STATS_URL = 'https://api.fintecture.com/ext/v1/activity';
 
     public function logAction($action)
@@ -25,6 +25,7 @@ class Fintecture_Payment_Helper_Stats extends Mage_Payment_Helper_Data
     {
         $enabled = Mage::helper('core')->isModuleEnabled('Fintecture_Payment');
         $active = Mage::getStoreConfig('payment/fintecture/active');
+        $bnplActive = Mage::getStoreConfig('payment/bnpl_fintecture/active');
         $isProduction = Mage::getStoreConfig('payment/fintecture/environment') === 'production';
         $allActivePaymentMethods = Mage::getModel('payment/config')->getActiveMethods();
 
@@ -41,7 +42,8 @@ class Fintecture_Payment_Helper_Stats extends Mage_Payment_Helper_Data
             'module_production' => $isProduction,
             'module_sandbox_app_id' => Mage::getStoreConfig('payment/fintecture/sandbox_app_id'),
             'module_production_app_id' => Mage::getStoreConfig('payment/fintecture/production_app_id'),
-            'module_branding' => Mage::getStoreConfig('payment/fintecture/show_logo')
+            'module_bnpl' => $enabled && $bnplActive,
+            'module_bnpl_min_amount' => Mage::getStoreConfig('payment/bnpl_fintecture/minimun_amount_bnpl'),
         ];
     }
 }

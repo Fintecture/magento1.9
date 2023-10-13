@@ -40,6 +40,8 @@ class Fintecture_Payment_Helper_Util extends Mage_Payment_Helper_Data
                     return $this->mappedState('payment_created');
                 } elseif ($payment_status['meta']['status'] === 'payment_pending') {
                     return $this->mappedState('payment_pending');
+                } elseif ($payment_status['meta']['status'] === 'order_created') {
+                    return $this->mappedState('order_created');
                 }
             }
         }
@@ -51,6 +53,8 @@ class Fintecture_Payment_Helper_Util extends Mage_Payment_Helper_Data
         switch ($status) {
             case 'payment_created':
                 return Mage_Sales_Model_Order::STATE_PROCESSING;
+            case 'order_created':
+                return 'order_created';
             case 'payment_pending':
                 return Mage_Sales_Model_Order::STATE_PENDING_PAYMENT;
             case 'payment_unsuccessful':
@@ -68,7 +72,7 @@ class Fintecture_Payment_Helper_Util extends Mage_Payment_Helper_Data
         $amount = (string) round($data['grand_total'], 2); // keep only 2 decimals
         $communication = self::FINTECTURE_PAYMENT_PREFIX . $data['increment_id'];
 
-        return [
+        $payload = [
             'data' => [
                 'type' => 'PAYMENT',
                 'attributes' => [
@@ -82,7 +86,6 @@ class Fintecture_Payment_Helper_Util extends Mage_Payment_Helper_Data
                 'psu_email' => $data['customer_email'],
                 'psu_ip' => $data['remote_ip'],
                 'psu_phone' => $address['telephone'],
-                'psu_company' => $address['company'],
                 'psu_address' => [
                     'street' => $address['street'],
                     'complement' => $address['street'],
@@ -92,6 +95,12 @@ class Fintecture_Payment_Helper_Util extends Mage_Payment_Helper_Data
                 ]
             ]
         ];
+
+        if (!empty($address['company'])) {
+            $payload['meta']['psu_company'] = $address['company'];
+        }
+
+        return $payload;
     }
 
     public function validSignature($private_key)

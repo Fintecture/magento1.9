@@ -1,8 +1,6 @@
 "Instant bank payment","Virement immédiat"
 "Enabled","Activer"
 "Bank Type","Catégorie de banques"
-"Show Logo","Afficher le logo"
-"Show logo at checkout","Afficher le logo Fintecture au paiement."
 "Environment","Environnement"
 "App ID","App ID"
 "App Secret","App Secret"
@@ -21,3 +19,8 @@
 "Delete File","Supprimer le fichier"
 "Your payment is being validated by your bank.","Votre paiement est en cours de validation par votre banque."
 "Cannot add the item to shopping cart.","Impossible d'ajouter l'article au panier."
+"Buy Now Pay Later by Fintecture","Buy Now Pay Later par Fintecture",
+"Immediate Transfer by Fintecture","Virement immédiat par Fintecture"
+"Minimum order amount to enable this payment method (in €)","Montant minimum de la commande pour activer ce mode de paiement (en €)"
+"Buy Now, Pay Later. Without fee.","Achetez maintenant, payez plus tard. Sans frais."
+"Benefit from a 30 day payment term for your professional purchases.","Bénéficiez d'un délai de paiement de 30 jours pour vos achats professionnels."

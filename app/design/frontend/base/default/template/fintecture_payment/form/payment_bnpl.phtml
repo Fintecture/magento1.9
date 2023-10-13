@@ -1,0 +1,27 @@
+<?php
+// The ID using the code on the UL is important - this is what Magento will use to hide and display the 
+// Form with javascript - it should be set to display:none by default
+$_code = $this->getMethod()->getCode();
+
+$quote_id = Mage::getSingleton('checkout/session')->getQuoteId();
+?>
+<ul class="form-list" id="payment_form_<?php echo $_code ?>" style="display:none;">
+</ul>
+<?php echo $this->getCustomText(); ?>
+
+<?php if (!Mage::getStoreConfig('payment/fintecture/active')) { ?>
+    <script type="text/javascript">
+    //<![CDATA[
+    const cartId = '<?php echo $quote_id; ?>';
+    let storedCartId = localStorage.getItem('fintecture-cartId');
+    if (!storedCartId || cartId !== storedCartId) {
+        var oReq = new XMLHttpRequest();
+        oReq.open('get', '<?php echo $this->host; ?>/fintecture/standard/checkoutstats', true);
+        oReq.send();
+
+        localStorage.removeItem('fintecture-cartId');
+        localStorage.setItem('fintecture-cartId', cartId);
+    }
+    //]]>
+    </script>
+<?php } ?>

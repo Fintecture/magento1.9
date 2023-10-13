@@ -22,7 +22,10 @@ class Fintecture_Payment_StandardController extends Mage_Core_Controller_Front_A
 
         // Get redirect URL
         $curl = Mage::helper('fintecture_payment/curl');
-        $connect = $curl->connect($payload, $params);
+
+        $method = $this->getRequest()->getParam('method');
+        $connect = $curl->connect($payload, $params, $method);
+        
         if (!$connect) {
             Mage_Core_Controller_Varien_Action::_redirect('checkout/onepage/failure');
         } else {
@@ -54,7 +57,7 @@ class Fintecture_Payment_StandardController extends Mage_Core_Controller_Front_A
         }
 
         $error = empty($params['state']) || empty($params['status']) || empty($params['session_id'] ||
-            !in_array($params['status'], ['payment_created', 'payment_pending']));
+            !in_array($params['status'], ['payment_created', 'payment_pending', 'order_created']));
 
         if (!$error) {
             $curl = Mage::helper('fintecture_payment/curl');
@@ -69,7 +72,10 @@ class Fintecture_Payment_StandardController extends Mage_Core_Controller_Front_A
             $state = $util->getOrderState($payment_status, $params['status'], $transaction_id);
             $order->setState($state, true);
 
-            if ($state === Mage_Sales_Model_Order::STATE_PROCESSING) {
+            if (in_array($state, [
+                Mage_Sales_Model_Order::STATE_PROCESSING,
+                'order_created',
+            ])) {
                 // Payment was successful, so update the order's state, send order email and move to the success page
                 $order->sendNewOrderEmail();
                 $order->setEmailSent(true);
@@ -94,7 +100,7 @@ class Fintecture_Payment_StandardController extends Mage_Core_Controller_Front_A
                     $invoice->getOrder()->setIsInProcess(true);
                     $order->addStatusHistoryComment(
                         'Auto Invoice generated.',
-                        Mage_Sales_Model_Order::STATE_PROCESSING
+                        $state
                     )->setIsCustomerNotified(true);
                 } else {
                     $order->addStatusHistoryComment('Fintecture: Order cannot be invoiced.', false);
