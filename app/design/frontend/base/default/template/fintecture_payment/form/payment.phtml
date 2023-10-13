@@ -9,16 +9,16 @@ $quote_id = Mage::getSingleton('checkout/session')->getQuoteId();
 </ul>
 
 <script type="text/javascript">
-    //<![CDATA[
-    const cartId = '<?php echo $quote_id; ?>';
-    let storedCartId = localStorage.getItem('fintecture-cartId');
-    if (!storedCartId || cartId !== storedCartId) {
-        var oReq = new XMLHttpRequest();
-        oReq.open('get', '<?php echo $this->host; ?>/fintecture/standard/checkoutstats', true);
-        oReq.send();
+//<![CDATA[
+const cartId = '<?php echo $quote_id; ?>';
+let storedCartId = localStorage.getItem('fintecture-cartId');
+if (!storedCartId || cartId !== storedCartId) {
+    var oReq = new XMLHttpRequest();
+    oReq.open('get', '<?php echo $this->host; ?>/fintecture/standard/checkoutstats', true);
+    oReq.send();
 
-        localStorage.removeItem('fintecture-cartId');
-        localStorage.setItem('fintecture-cartId', cartId);
-    }
-    //]]>
+    localStorage.removeItem('fintecture-cartId');
+    localStorage.setItem('fintecture-cartId', cartId);
+}
+//]]>
 </script>

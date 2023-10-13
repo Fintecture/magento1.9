@@ -2,7 +2,7 @@
 <config>
     <modules>
         <Fintecture_Payment>
-            <version>1.0.7</version>
+            <version>1.1.0</version>
         </Fintecture_Payment>
     </modules>
 
@@ -26,14 +26,14 @@
         </helpers>
 
         <resources>
-            <payment_setup>
+            <fintecture_setup>
                 <setup>
                     <module>Fintecture_Payment</module>
                 </setup>
                 <connection>
                     <use>core_setup</use>
                 </connection>
-            </payment_setup>
+            </fintecture_setup>
             <payment_write>
                 <connection>
                     <use>core_write</use>
@@ -57,6 +57,16 @@
                 </observers>
             </admin_system_config_changed_section_payment>
         </events>
+
+        <sales>
+            <order>
+                <states>
+                    <order_created translate="label">
+                        <label>Order Created</label>
+                    </order_created>
+                </states>
+            </order>
+        </sales>
     </global>
 
     <frontend>
@@ -102,7 +112,18 @@
                 <title>Fintecture</title>
                 <payment_action>sale</payment_action>
                 <allowspecific>0</allowspecific>
+                <sort_order>0</sort_order>
             </fintecture>
+            <bnpl_fintecture>
+                <active>0</active>
+                <model>fintecture_payment/paymentBnpl</model>
+                <order_status>pending</order_status>
+                <title>Fintecture - Buy Now Pay Later</title>
+                <payment_action>sale</payment_action>
+                <allowspecific>0</allowspecific>
+                <sort_order>1</sort_order>
+                <minimun_amount_bnpl>0</minimun_amount_bnpl>
+            </bnpl_fintecture>
         </payment>
     </default>
 </config>

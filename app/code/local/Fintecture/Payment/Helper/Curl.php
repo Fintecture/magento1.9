@@ -117,7 +117,10 @@ class Fintecture_Payment_Helper_Curl extends Mage_Payment_Helper_Data
         return true;
     }
 
-    public function connect($payload, $params)
+    /**
+     * This function is used to create a link of payment
+     */
+    public function connect($payload, $params, $method)
     {
         $config = Mage::helper('fintecture_payment/config');
         $app = $config->getAppInformation();
@@ -128,6 +131,10 @@ class Fintecture_Payment_Helper_Curl extends Mage_Payment_Helper_Data
         $token = $this->getAccessToken($app);
         if (!$token) {
             return false;
+        }
+
+        if ($method && $method === 'bnpl') {
+            $payload['meta']['type'] = 'BuyNowPayLater';
         }
 
         $url = '/pis/v2/connect?' . $params;

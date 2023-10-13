@@ -13,11 +13,9 @@ class Fintecture_Payment_Block_Form_Payment extends Mage_Core_Block_Template
             ->setTemplate('fintecture_payment/form/payment.phtml')
             ->setMethodTitle($this->__('Instant bank payment'));
 
-        if ($config['show_logo'] = Mage::getStoreConfig('payment/fintecture/show_logo')) {
-            $fintecture_logo = Mage::getConfig()->getBlockClassName('core/template');
-            $fintecture_logo = new $fintecture_logo();
-            $fintecture_logo->setTemplate('fintecture_payment/form/logo.phtml');
-            $this->setMethodLabelAfterHtml($fintecture_logo->toHtml());
-        }
+        $fintecture_logo = Mage::getConfig()->getBlockClassName('core/template');
+        $fintecture_logo = new $fintecture_logo();
+        $fintecture_logo->setTemplate('fintecture_payment/form/logo.phtml');
+        $this->setMethodLabelAfterHtml($fintecture_logo->toHtml());
     }
 }
